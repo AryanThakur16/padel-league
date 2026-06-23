@@ -50,20 +50,18 @@ export default function Sessions() {
     <div className="max-w-xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-slate-800 mb-6">Sessions</h1>
 
-      <form onSubmit={createSession} className="bg-white border border-slate-200 rounded-xl p-4 mb-6 flex flex-col sm:flex-row gap-3 sm:items-end">
-        <div className="flex-1">
-          <label className="block text-xs font-medium text-slate-500 mb-1">Date (optional)</label>
-          <input
-            type="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div>
+      <form onSubmit={createSession} className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
+        <label className="block text-xs font-medium text-slate-500 mb-1">Date (optional)</label>
+        <input
+          type="date"
+          value={date}
+          onChange={e => setDate(e.target.value)}
+          className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 mb-3"
+        />
         <button
           type="submit"
           disabled={creating}
-          className="w-full sm:w-auto bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50 whitespace-nowrap"
+          className="w-full bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
         >
           {creating ? '…' : '+ New Session'}
         </button>
