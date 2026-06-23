@@ -3,33 +3,30 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { generateMatches } from '../utils/americano'
 
-function ScoreInput({ value, onChange, label }) {
+function ScoreInput({ value, onChange }) {
   return (
-    <div className="flex flex-col items-center gap-1">
-      <span className="text-xs text-slate-400">{label}</span>
-      <div className="flex items-center gap-1">
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(0, (value ?? 0) - 1))}
-          className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 font-bold text-lg flex items-center justify-center hover:bg-slate-200 active:scale-95 transition-all"
-        >−</button>
-        <input
-          type="number"
-          value={value ?? ''}
-          min={0} max={9}
-          onChange={e => {
-            const v = parseInt(e.target.value)
-            onChange(isNaN(v) ? null : Math.min(9, Math.max(0, v)))
-          }}
-          className="w-12 h-10 text-center text-xl font-bold border-2 border-slate-200 rounded-lg focus:outline-none focus:border-green-500 bg-white"
-          placeholder="—"
-        />
-        <button
-          type="button"
-          onClick={() => onChange(Math.min(9, (value ?? 0) + 1))}
-          className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 font-bold text-lg flex items-center justify-center hover:bg-slate-200 active:scale-95 transition-all"
-        >+</button>
-      </div>
+    <div className="flex items-center gap-1.5 flex-shrink-0">
+      <button
+        type="button"
+        onClick={() => onChange(Math.max(0, (value ?? 0) - 1))}
+        className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 font-bold text-lg flex items-center justify-center hover:bg-slate-200 active:scale-95 transition-all"
+      >−</button>
+      <input
+        type="number"
+        value={value ?? ''}
+        min={0} max={9}
+        onChange={e => {
+          const v = parseInt(e.target.value)
+          onChange(isNaN(v) ? null : Math.min(9, Math.max(0, v)))
+        }}
+        className="w-12 h-10 text-center text-xl font-bold border-2 border-slate-200 rounded-lg focus:outline-none focus:border-green-500 bg-white"
+        placeholder="—"
+      />
+      <button
+        type="button"
+        onClick={() => onChange(Math.min(9, (value ?? 0) + 1))}
+        className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 font-bold text-lg flex items-center justify-center hover:bg-slate-200 active:scale-95 transition-all"
+      >+</button>
     </div>
   )
 }
@@ -82,27 +79,22 @@ function MatchCard({ match, playerById, onSave }) {
         {saved && <span className="text-xs text-green-600">✓ Saved</span>}
       </div>
 
-      <div className="flex items-center gap-2">
-        {/* Team A */}
-        <div className="flex-1 text-right">
-          <div className="font-semibold text-slate-800 text-sm leading-tight">{p1a}</div>
-          <div className="text-xs text-slate-400">&</div>
-          <div className="font-semibold text-slate-800 text-sm leading-tight">{p2a}</div>
+      {/* Team A row */}
+      <div className="flex items-center justify-between py-2 border-b border-slate-100">
+        <div className="flex-1 min-w-0 mr-3">
+          <span className="text-xs font-semibold text-green-600 uppercase">A</span>
+          <div className="font-semibold text-slate-800 text-sm truncate">{p1a} &amp; {p2a}</div>
         </div>
+        <ScoreInput value={scoreA} onChange={handleA} />
+      </div>
 
-        {/* Scores */}
-        <div className="flex items-center gap-3 px-2">
-          <ScoreInput value={scoreA} onChange={handleA} label="A" />
-          <span className="text-slate-300 font-light text-lg">vs</span>
-          <ScoreInput value={scoreB} onChange={handleB} label="B" />
+      {/* Team B row */}
+      <div className="flex items-center justify-between py-2">
+        <div className="flex-1 min-w-0 mr-3">
+          <span className="text-xs font-semibold text-slate-400 uppercase">B</span>
+          <div className="font-semibold text-slate-800 text-sm truncate">{p1b} &amp; {p2b}</div>
         </div>
-
-        {/* Team B */}
-        <div className="flex-1 text-left">
-          <div className="font-semibold text-slate-800 text-sm leading-tight">{p1b}</div>
-          <div className="text-xs text-slate-400">&</div>
-          <div className="font-semibold text-slate-800 text-sm leading-tight">{p2b}</div>
-        </div>
+        <ScoreInput value={scoreB} onChange={handleB} />
       </div>
 
       {result && (
