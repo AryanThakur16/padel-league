@@ -63,7 +63,7 @@ export default function Sessions() {
         <button
           type="submit"
           disabled={creating}
-          className="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50 whitespace-nowrap"
+          className="w-full sm:w-auto bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50 whitespace-nowrap"
         >
           {creating ? '…' : '+ New Session'}
         </button>
