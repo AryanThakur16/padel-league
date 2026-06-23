@@ -48,43 +48,47 @@ export default function LeagueTable() {
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6">
-          {/* Table header */}
-          <div className="grid grid-cols-[2rem_1fr_3rem_3rem_3rem_3rem_3.5rem] gap-x-2 px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase tracking-wide">
-            <div>#</div>
-            <div>Player</div>
-            <div className="text-center">Sess</div>
-            <div className="text-center">Played</div>
-            <div className="text-center">Won</div>
-            <div className="text-center">Pts</div>
-            <div className="text-center">Win%</div>
-          </div>
-
-          {/* Rows */}
-          {table.map((row, i) => (
-            <button
-              key={row.id}
-              onClick={() => navigate(`/players/${row.id}`)}
-              className="w-full grid grid-cols-[2rem_1fr_3rem_3rem_3rem_3rem_3.5rem] gap-x-2 px-4 py-3.5 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors text-left items-center"
-            >
-              <div className="text-sm font-bold text-slate-400">{i + 1}</div>
-              <div className="flex items-center gap-2">
-                <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
-                  i === 0 ? 'bg-amber-100 text-amber-700' :
-                  i === 1 ? 'bg-slate-200 text-slate-600' :
-                  i === 2 ? 'bg-orange-100 text-orange-700' :
-                  'bg-slate-100 text-slate-500'
-                }`}>
-                  {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
-                </span>
-                <span className="font-semibold text-slate-800 text-sm truncate">{row.name}</span>
+          <div className="overflow-x-auto">
+            <div className="min-w-[480px]">
+              {/* Table header */}
+              <div className="grid grid-cols-[2rem_1fr_3rem_3rem_3rem_3rem_3.5rem] gap-x-2 px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                <div>#</div>
+                <div>Player</div>
+                <div className="text-center">Sess</div>
+                <div className="text-center">Played</div>
+                <div className="text-center">Won</div>
+                <div className="text-center">Pts</div>
+                <div className="text-center">Win%</div>
               </div>
-              <div className="text-center text-sm text-slate-500">{row.sessions}</div>
-              <div className="text-center text-sm text-slate-500">{row.matchesPlayed}</div>
-              <div className="text-center text-sm text-slate-500">{row.gamesWon}</div>
-              <div className="text-center text-sm font-bold text-green-700">{row.points}</div>
-              <div className="text-center text-sm text-slate-500">{row.winPct != null ? `${row.winPct}%` : '—'}</div>
-            </button>
-          ))}
+
+              {/* Rows */}
+              {table.map((row, i) => (
+                <button
+                  key={row.id}
+                  onClick={() => navigate(`/players/${row.id}`)}
+                  className="w-full grid grid-cols-[2rem_1fr_3rem_3rem_3rem_3rem_3.5rem] gap-x-2 px-4 py-3.5 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors text-left items-center"
+                >
+                  <div className="text-sm font-bold text-slate-400">{i + 1}</div>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0 ${
+                      i === 0 ? 'bg-amber-100 text-amber-700' :
+                      i === 1 ? 'bg-slate-200 text-slate-600' :
+                      i === 2 ? 'bg-orange-100 text-orange-700' :
+                      'bg-slate-100 text-slate-500'
+                    }`}>
+                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+                    </span>
+                    <span className="font-semibold text-slate-800 text-sm truncate">{row.name}</span>
+                  </div>
+                  <div className="text-center text-sm text-slate-500">{row.sessions}</div>
+                  <div className="text-center text-sm text-slate-500">{row.matchesPlayed}</div>
+                  <div className="text-center text-sm text-slate-500">{row.gamesWon}</div>
+                  <div className="text-center text-sm font-bold text-green-700">{row.points}</div>
+                  <div className="text-center text-sm text-slate-500">{row.winPct != null ? `${row.winPct}%` : '—'}</div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -93,30 +97,34 @@ export default function LeagueTable() {
         <div>
           <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Session History</h2>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-            <div className="grid grid-cols-[1fr_5rem_3rem_3rem_1fr] gap-x-2 px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase tracking-wide">
-              <div>Session</div>
-              <div>Date</div>
-              <div className="text-center">Players</div>
-              <div className="text-center">Matches</div>
-              <div>Session Winner</div>
+            <div className="overflow-x-auto">
+              <div className="min-w-[420px]">
+                <div className="grid grid-cols-[1fr_5rem_3rem_3rem_1fr] gap-x-2 px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                  <div>Session</div>
+                  <div>Date</div>
+                  <div className="text-center">Players</div>
+                  <div className="text-center">Matches</div>
+                  <div>Session Winner</div>
+                </div>
+                {summary.filter(s => s.players > 0).map(({ session, players: numP, matches: numM, topPlayerId, topPoints }) => (
+                  <button
+                    key={session.id}
+                    onClick={() => navigate(`/sessions/${session.id}`)}
+                    className="w-full grid grid-cols-[1fr_5rem_3rem_3rem_1fr] gap-x-2 px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors text-left items-center text-sm"
+                  >
+                    <div className="font-medium text-slate-700">Session {session.session_number}</div>
+                    <div className="text-slate-400 text-xs">
+                      {session.date ? new Date(session.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—'}
+                    </div>
+                    <div className="text-center text-slate-500">{numP}</div>
+                    <div className="text-center text-slate-500">{numM}</div>
+                    <div className="text-slate-700">
+                      {topPlayerId ? <><span className="font-medium">{playerById[topPlayerId]?.name}</span> <span className="text-slate-400 text-xs">({topPoints} pts)</span></> : '—'}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-            {summary.filter(s => s.players > 0).map(({ session, players: numP, matches: numM, topPlayerId, topPoints }) => (
-              <button
-                key={session.id}
-                onClick={() => navigate(`/sessions/${session.id}`)}
-                className="w-full grid grid-cols-[1fr_5rem_3rem_3rem_1fr] gap-x-2 px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors text-left items-center text-sm"
-              >
-                <div className="font-medium text-slate-700">Session {session.session_number}</div>
-                <div className="text-slate-400 text-xs">
-                  {session.date ? new Date(session.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—'}
-                </div>
-                <div className="text-center text-slate-500">{numP}</div>
-                <div className="text-center text-slate-500">{numM}</div>
-                <div className="text-slate-700">
-                  {topPlayerId ? <><span className="font-medium">{playerById[topPlayerId]?.name}</span> <span className="text-slate-400 text-xs">({topPoints} pts)</span></> : '—'}
-                </div>
-              </button>
-            ))}
           </div>
         </div>
       )}
