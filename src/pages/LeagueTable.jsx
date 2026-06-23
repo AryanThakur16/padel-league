@@ -98,19 +98,19 @@ export default function LeagueTable() {
           <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Session History</h2>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <div className="min-w-[420px]">
-                <div className="grid grid-cols-[1fr_5rem_3rem_3rem_1fr] gap-x-2 px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+              <div className="min-w-[480px]">
+                <div className="grid grid-cols-[1.2fr_4.5rem_2.5rem_2.5rem_1.8fr] gap-x-2 px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase tracking-wide">
                   <div>Session</div>
                   <div>Date</div>
-                  <div className="text-center">Players</div>
-                  <div className="text-center">Matches</div>
-                  <div>Session Winner</div>
+                  <div className="text-center">Pl</div>
+                  <div className="text-center">M</div>
+                  <div>Winner</div>
                 </div>
                 {summary.filter(s => s.players > 0).map(({ session, players: numP, matches: numM, topPlayerId, topPoints }) => (
                   <button
                     key={session.id}
                     onClick={() => navigate(`/sessions/${session.id}`)}
-                    className="w-full grid grid-cols-[1fr_5rem_3rem_3rem_1fr] gap-x-2 px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors text-left items-center text-sm"
+                    className="w-full grid grid-cols-[1.2fr_4.5rem_2.5rem_2.5rem_1.8fr] gap-x-2 px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors text-left items-center text-sm"
                   >
                     <div className="font-medium text-slate-700">Session {session.session_number}</div>
                     <div className="text-slate-400 text-xs">

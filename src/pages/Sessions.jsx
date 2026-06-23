@@ -50,7 +50,7 @@ export default function Sessions() {
     <div className="max-w-xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-slate-800 mb-6">Sessions</h1>
 
-      <form onSubmit={createSession} className="bg-white border border-slate-200 rounded-xl p-4 mb-6 flex flex-col sm:flex-row gap-3 items-end">
+      <form onSubmit={createSession} className="bg-white border border-slate-200 rounded-xl p-4 mb-6 flex flex-col sm:flex-row gap-3 sm:items-end">
         <div className="flex-1">
           <label className="block text-xs font-medium text-slate-500 mb-1">Date (optional)</label>
           <input
