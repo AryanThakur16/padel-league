@@ -23,7 +23,6 @@ export default function Players() {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
-    if (players.length >= 16) { setError('Maximum 16 players allowed'); return }
     setAdding(true)
     setError('')
     const { error: err } = await supabase.from('players').insert({ name: trimmed })
@@ -45,7 +44,7 @@ export default function Players() {
   return (
     <div className="max-w-xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-slate-800 mb-1">Players</h1>
-      <p className="text-slate-500 text-sm mb-6">{players.length}/16 registered</p>
+      <p className="text-slate-500 text-sm mb-6">{players.length} registered</p>
 
       <form onSubmit={addPlayer} className="flex gap-2 mb-6">
         <input
