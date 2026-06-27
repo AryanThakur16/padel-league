@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { generateMatches } from '../utils/americano'
+import PasswordModal from '../components/PasswordModal'
 
 function ScoreInput({ value, onChange }) {
   return (
@@ -115,6 +116,7 @@ export default function SessionDetail() {
   const [playerPoints, setPlayerPoints] = useState({})
   const [loading, setLoading] = useState(true)
   const [starting, setStarting] = useState(false)
+  const [modal, setModal] = useState(null) // 'reset' | 'delete'
 
   useEffect(() => { load() }, [id])
 
@@ -187,8 +189,8 @@ export default function SessionDetail() {
     setStarting(false)
   }
 
-  async function resetSession() {
-    if (!confirm('Reset this session? All player selections and scores will be deleted.')) return
+  async function doReset() {
+    setModal(null)
     await supabase.from('session_slots').delete().eq('session_id', id)
     await supabase.from('matches').delete().eq('session_id', id)
     setSlots([])
@@ -197,8 +199,8 @@ export default function SessionDetail() {
     setPlayerPoints({})
   }
 
-  async function deleteSession() {
-    if (!confirm('Delete this entire session? This cannot be undone.')) return
+  async function doDelete() {
+    setModal(null)
     await supabase.from('sessions').delete().eq('id', id)
     navigate('/sessions')
   }
@@ -225,7 +227,7 @@ export default function SessionDetail() {
           )}
         </div>
         {sessionReady && (
-          <button onClick={resetSession} className="text-xs text-slate-400 hover:text-red-500 transition-colors mt-2">
+          <button onClick={() => setModal('reset')} className="text-xs text-slate-400 hover:text-red-500 transition-colors mt-2">
             Reset
           </button>
         )}
@@ -319,10 +321,25 @@ export default function SessionDetail() {
       )}
 
       <div className="mt-8 text-center">
-        <button onClick={deleteSession} className="text-xs text-slate-300 hover:text-red-400 transition-colors">
+        <button onClick={() => setModal('delete')} className="text-xs text-slate-300 hover:text-red-400 transition-colors">
           Delete session
         </button>
       </div>
+
+      {modal === 'reset' && (
+        <PasswordModal
+          message="Enter the password to reset this session and clear all scores."
+          onConfirm={doReset}
+          onCancel={() => setModal(null)}
+        />
+      )}
+      {modal === 'delete' && (
+        <PasswordModal
+          message="Enter the password to permanently delete this session."
+          onConfirm={doDelete}
+          onCancel={() => setModal(null)}
+        />
+      )}
     </div>
   )
 }

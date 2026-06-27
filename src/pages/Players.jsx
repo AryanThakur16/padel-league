@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import PasswordModal from '../components/PasswordModal'
 
 export default function Players() {
   const [players, setPlayers] = useState([])
@@ -8,6 +9,7 @@ export default function Players() {
   const [loading, setLoading] = useState(true)
   const [adding, setAdding] = useState(false)
   const [error, setError] = useState('')
+  const [pendingDelete, setPendingDelete] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => { load() }, [])
@@ -35,8 +37,9 @@ export default function Players() {
     setAdding(false)
   }
 
-  async function deletePlayer(id) {
-    if (!confirm('Remove this player? This will also remove them from any sessions.')) return
+  async function confirmDelete() {
+    const id = pendingDelete
+    setPendingDelete(null)
     await supabase.from('players').delete().eq('id', id)
     setPlayers(p => p.filter(x => x.id !== id))
   }
@@ -87,7 +90,7 @@ export default function Players() {
                 <span className="font-medium text-slate-800">{player.name}</span>
               </div>
               <button
-                onClick={e => { e.stopPropagation(); deletePlayer(player.id) }}
+                onClick={e => { e.stopPropagation(); setPendingDelete(player.id) }}
                 className="text-slate-300 hover:text-red-400 transition-colors p-1"
                 title="Remove player"
               >
@@ -96,6 +99,14 @@ export default function Players() {
             </li>
           ))}
         </ul>
+      )}
+
+      {pendingDelete && (
+        <PasswordModal
+          message="Enter the password to remove this player."
+          onConfirm={confirmDelete}
+          onCancel={() => setPendingDelete(null)}
+        />
       )}
     </div>
   )
