@@ -1,6 +1,14 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { Trophy, CalendarDays, Users, Settings, ChevronLeft } from 'lucide-react'
+
+const NAV_ITEMS = [
+  { key: 'standings', label: 'Standings', Icon: Trophy, end: true },
+  { key: 'sessions',  label: 'Sessions',  Icon: CalendarDays, end: false },
+  { key: 'players',   label: 'Players',   Icon: Users, end: false },
+  { key: 'settings',  label: 'Settings',  Icon: Settings, end: false },
+]
 
 export default function Nav({ leagueId }) {
   const [leagueName, setLeagueName] = useState('')
@@ -13,72 +21,85 @@ export default function Nav({ leagueId }) {
   }, [leagueId])
 
   const base = `/leagues/${leagueId}`
-  const links = [
-    { to: base, label: 'Standings', icon: '🏆', end: true },
-    { to: `${base}/sessions`, label: 'Sessions', icon: '🎾', end: false },
-    { to: `${base}/players`, label: 'Players', icon: '👥', end: false },
-    { to: `${base}/settings`, label: 'Settings', icon: '⚙️', end: false },
-  ]
+
+  function toPath(key) {
+    return key === 'standings' ? base : `${base}/${key}`
+  }
 
   return (
     <>
-      {/* Desktop sidebar */}
+      {/* ── Desktop sidebar ── */}
       <aside className="hidden md:flex fixed inset-y-0 left-0 w-56 bg-white border-r border-slate-200 flex-col z-20">
-        {/* League name + back */}
         <div className="px-5 py-4 border-b border-slate-200">
           <button
             onClick={() => navigate('/')}
-            className="text-xs text-slate-400 hover:text-slate-600 transition-colors mb-2 flex items-center gap-1"
+            className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-700 transition-colors mb-2"
           >
-            ← All Leagues
+            <ChevronLeft size={13} />
+            All Leagues
           </button>
-          <div className="font-bold text-slate-800 text-base leading-tight">🎾 {leagueName || '…'}</div>
+          <div className="font-bold text-slate-800 text-base leading-tight truncate">
+            {leagueName || '…'}
+          </div>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
-          {links.map(({ to, label, icon, end }) => (
+
+        <nav className="flex-1 p-3 space-y-0.5">
+          {NAV_ITEMS.map(({ key, label, Icon, end }) => (
             <NavLink
-              key={to}
-              to={to}
+              key={key}
+              to={toPath(key)}
               end={end}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-green-50 text-green-700'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
                 }`
               }
             >
-              <span className="text-lg">{icon}</span>
-              {label}
+              {({ isActive }) => (
+                <>
+                  <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
+                  {label}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
       </aside>
 
-      {/* Mobile bottom bar */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex z-20">
-        {/* Back to leagues */}
-        <button
-          onClick={() => navigate('/')}
-          className="flex flex-col items-center justify-center py-2 px-3 gap-0.5 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
-        >
-          <span className="text-xl">‹</span>
-          <span>Leagues</span>
-        </button>
-        <div className="flex-1 flex">
-          {links.map(({ to, label, icon, end }) => (
+      {/* ── Mobile bottom bar ── */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 bg-white border-t border-slate-200"
+           style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="flex items-stretch h-14">
+
+          {/* Back to leagues */}
+          <button
+            onClick={() => navigate('/')}
+            className="flex flex-col items-center justify-center gap-0.5 px-3 text-slate-400 hover:text-slate-600 transition-colors border-r border-slate-100"
+          >
+            <ChevronLeft size={20} strokeWidth={1.8} />
+            <span className="text-[10px] font-medium">Leagues</span>
+          </button>
+
+          {/* Page tabs */}
+          {NAV_ITEMS.map(({ key, label, Icon, end }) => (
             <NavLink
-              key={to}
-              to={to}
+              key={key}
+              to={toPath(key)}
               end={end}
               className={({ isActive }) =>
-                `flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-xs font-medium transition-colors ${
+                `flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors ${
                   isActive ? 'text-green-600' : 'text-slate-400'
                 }`
               }
             >
-              <span className="text-xl">{icon}</span>
-              {label}
+              {({ isActive }) => (
+                <>
+                  <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
+                  <span className="text-[10px] font-medium">{label}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </div>
