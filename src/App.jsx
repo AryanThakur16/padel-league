@@ -109,7 +109,7 @@ function LeagueShell() {
   return (
     <div className="min-h-screen bg-slate-50">
       <Nav leagueId={leagueId} />
-      <div className="md:pl-56 pb-20 md:pb-6">
+      <div className="md:pl-56 pb-24 md:pb-6">
         <Routes>
           <Route index element={<LeagueTable />} />
           <Route path="players" element={<Players />} />

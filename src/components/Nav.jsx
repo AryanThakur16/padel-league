@@ -4,10 +4,10 @@ import { supabase } from '../lib/supabase'
 import { Trophy, CalendarDays, Users, Settings, ChevronLeft } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { key: 'standings', label: 'Standings', Icon: Trophy, end: true },
+  { key: 'standings', label: 'Standings', Icon: Trophy,       end: true  },
   { key: 'sessions',  label: 'Sessions',  Icon: CalendarDays, end: false },
-  { key: 'players',   label: 'Players',   Icon: Users, end: false },
-  { key: 'settings',  label: 'Settings',  Icon: Settings, end: false },
+  { key: 'players',   label: 'Players',   Icon: Users,        end: false },
+  { key: 'settings',  label: 'Settings',  Icon: Settings,     end: false },
 ]
 
 export default function Nav({ leagueId }) {
@@ -21,7 +21,6 @@ export default function Nav({ leagueId }) {
   }, [leagueId])
 
   const base = `/leagues/${leagueId}`
-
   function toPath(key) {
     return key === 'standings' ? base : `${base}/${key}`
   }
@@ -42,7 +41,6 @@ export default function Nav({ leagueId }) {
             {leagueName || '…'}
           </div>
         </div>
-
         <nav className="flex-1 p-3 space-y-0.5">
           {NAV_ITEMS.map(({ key, label, Icon, end }) => (
             <NavLink
@@ -69,18 +67,25 @@ export default function Nav({ leagueId }) {
       </aside>
 
       {/* ── Mobile bottom bar ── */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 bg-white border-t border-slate-200"
-           style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        <div className="flex items-stretch h-14">
+      {/* Outer wrapper carries the safe-area padding so the white bg fills behind the home indicator */}
+      <div
+        className="md:hidden fixed bottom-0 inset-x-0 z-20 bg-white border-t border-slate-100"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        {/* Icon row — fixed 56 px tall, items perfectly centred */}
+        <div className="flex items-center h-14">
 
-          {/* Back to leagues */}
+          {/* ← Leagues back button — same flex-1 width as every tab */}
           <button
             onClick={() => navigate('/')}
-            className="flex flex-col items-center justify-center gap-0.5 px-3 text-slate-400 hover:text-slate-600 transition-colors border-r border-slate-100"
+            className="flex-1 flex flex-col items-center justify-center gap-0.5 h-full text-slate-400 active:text-slate-600 transition-colors"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
-            <span className="text-[10px] font-medium">Leagues</span>
+            <span className="text-[10px] font-medium tracking-tight">Leagues</span>
           </button>
+
+          {/* Thin divider */}
+          <div className="w-px h-6 bg-slate-100 flex-shrink-0" />
 
           {/* Page tabs */}
           {NAV_ITEMS.map(({ key, label, Icon, end }) => (
@@ -89,7 +94,7 @@ export default function Nav({ leagueId }) {
               to={toPath(key)}
               end={end}
               className={({ isActive }) =>
-                `flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors ${
+                `flex-1 flex flex-col items-center justify-center gap-0.5 h-full transition-colors ${
                   isActive ? 'text-green-600' : 'text-slate-400'
                 }`
               }
@@ -97,13 +102,13 @@ export default function Nav({ leagueId }) {
               {({ isActive }) => (
                 <>
                   <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
-                  <span className="text-[10px] font-medium">{label}</span>
+                  <span className="text-[10px] font-medium tracking-tight">{label}</span>
                 </>
               )}
             </NavLink>
           ))}
         </div>
-      </nav>
+      </div>
     </>
   )
 }
