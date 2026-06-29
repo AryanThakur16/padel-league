@@ -110,7 +110,7 @@ const TEAM_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F']
 const EMPTY_TEAMS = Array(6).fill(null).map(() => ['', ''])
 
 export default function SessionDetail() {
-  const { id } = useParams()
+  const { leagueId, id } = useParams()
   const navigate = useNavigate()
   const [session, setSession] = useState(null)
   const [players, setPlayers] = useState([])
@@ -130,7 +130,7 @@ export default function SessionDetail() {
     setLoading(true)
     const [{ data: sess }, { data: allPlayers }, { data: sl }, { data: mt }] = await Promise.all([
       supabase.from('sessions').select('*').eq('id', id).single(),
-      supabase.from('players').select('*').order('name'),
+      supabase.from('players').select('*').eq('league_id', leagueId).order('name'),
       supabase.from('session_slots').select('*, players(id, name)').eq('session_id', id).order('slot'),
       supabase.from('matches').select('*').eq('session_id', id).order('round').order('court'),
     ])
@@ -234,7 +234,7 @@ export default function SessionDetail() {
   async function doDelete() {
     setModal(null)
     await supabase.from('sessions').delete().eq('id', id)
-    navigate('/sessions')
+    navigate('../sessions')
   }
 
   // Derive team label for a player (King of Court only)
@@ -256,7 +256,7 @@ export default function SessionDetail() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <button onClick={() => navigate('/sessions')} className="text-sm text-slate-400 hover:text-slate-600 mb-1 flex items-center gap-1">
+          <button onClick={() => navigate('../sessions')} className="text-sm text-slate-400 hover:text-slate-600 mb-1 flex items-center gap-1">
             ← Sessions
           </button>
           <h1 className="text-2xl font-bold text-slate-800">Session {session.session_number}</h1>

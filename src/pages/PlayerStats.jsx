@@ -14,22 +14,29 @@ function StatCard({ label, value, sub }) {
 }
 
 export default function PlayerStats() {
-  const { id } = useParams()
+  const { leagueId, id } = useParams()
   const navigate = useNavigate()
   const [player, setPlayer] = useState(null)
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { load() }, [id])
+  useEffect(() => { load() }, [id, leagueId])
 
   async function load() {
     setLoading(true)
-    const [{ data: p }, { data: allPlayers }, { data: sessions }, { data: slots }, { data: matches }] = await Promise.all([
+    const [{ data: p }, { data: allPlayers }, { data: sessions }] = await Promise.all([
       supabase.from('players').select('*').eq('id', id).single(),
-      supabase.from('players').select('*'),
-      supabase.from('sessions').select('*').order('session_number'),
-      supabase.from('session_slots').select('*'),
-      supabase.from('matches').select('*'),
+      supabase.from('players').select('*').eq('league_id', leagueId),
+      supabase.from('sessions').select('*').eq('league_id', leagueId).order('session_number'),
+    ])
+    const sessionIds = (sessions || []).map(s => s.id)
+    const [{ data: slots }, { data: matches }] = await Promise.all([
+      sessionIds.length
+        ? supabase.from('session_slots').select('*').in('session_id', sessionIds)
+        : Promise.resolve({ data: [] }),
+      sessionIds.length
+        ? supabase.from('matches').select('*').in('session_id', sessionIds)
+        : Promise.resolve({ data: [] }),
     ])
     setPlayer(p)
     if (p) {
@@ -43,7 +50,7 @@ export default function PlayerStats() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
-      <button onClick={() => navigate('/players')} className="text-sm text-slate-400 hover:text-slate-600 mb-3 flex items-center gap-1">
+      <button onClick={() => navigate('../players')} className="text-sm text-slate-400 hover:text-slate-600 mb-3 flex items-center gap-1">
         ← Players
       </button>
 

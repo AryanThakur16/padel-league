@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import PasswordModal from '../components/PasswordModal'
 
 export default function Players() {
+  const { leagueId } = useParams()
   const [players, setPlayers] = useState([])
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(true)
@@ -12,11 +13,11 @@ export default function Players() {
   const [pendingDelete, setPendingDelete] = useState(null)
   const navigate = useNavigate()
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, [leagueId])
 
   async function load() {
     setLoading(true)
-    const { data } = await supabase.from('players').select('*').order('name')
+    const { data } = await supabase.from('players').select('*').eq('league_id', leagueId).order('name')
     setPlayers(data || [])
     setLoading(false)
   }
@@ -27,7 +28,7 @@ export default function Players() {
     if (!trimmed) return
     setAdding(true)
     setError('')
-    const { error: err } = await supabase.from('players').insert({ name: trimmed })
+    const { error: err } = await supabase.from('players').insert({ name: trimmed, league_id: leagueId })
     if (err) {
       setError(err.message.includes('unique') ? 'A player with that name already exists.' : err.message)
     } else {
@@ -81,7 +82,7 @@ export default function Players() {
           {players.map((player, i) => (
             <li key={player.id}
               className="bg-white border border-slate-200 rounded-xl px-4 py-3 flex items-center justify-between hover:border-slate-300 transition-colors cursor-pointer"
-              onClick={() => navigate(`/players/${player.id}`)}
+              onClick={() => navigate(`${player.id}`)}
             >
               <div className="flex items-center gap-3">
                 <span className="w-7 h-7 bg-green-100 text-green-700 rounded-full text-xs font-bold flex items-center justify-center">

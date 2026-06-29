@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export default function Sessions() {
+  const { leagueId } = useParams()
   const [sessions, setSessions] = useState([])
   const [matchCounts, setMatchCounts] = useState({})
   const [loading, setLoading] = useState(true)
@@ -11,22 +12,26 @@ export default function Sessions() {
   const [sessionType, setSessionType] = useState('americano')
   const navigate = useNavigate()
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, [leagueId])
 
   async function load() {
     setLoading(true)
-    const [{ data: sData }, { data: mData }] = await Promise.all([
-      supabase.from('sessions').select('*').order('session_number'),
-      supabase.from('matches').select('id, session_id, score_a, score_b'),
-    ])
-    setSessions(sData || [])
-    const counts = {}
-    for (const m of (mData || [])) {
-      if (!counts[m.session_id]) counts[m.session_id] = { total: 0, scored: 0 }
-      counts[m.session_id].total++
-      if (m.score_a != null && m.score_b != null) counts[m.session_id].scored++
+    const { data: sData } = await supabase.from('sessions').select('*').eq('league_id', leagueId).order('session_number')
+    const s = sData || []
+    setSessions(s)
+    const sessionIds = s.map(x => x.id)
+    if (sessionIds.length) {
+      const { data: mData } = await supabase.from('matches').select('id, session_id, score_a, score_b').in('session_id', sessionIds)
+      const counts = {}
+      for (const m of (mData || [])) {
+        if (!counts[m.session_id]) counts[m.session_id] = { total: 0, scored: 0 }
+        counts[m.session_id].total++
+        if (m.score_a != null && m.score_b != null) counts[m.session_id].scored++
+      }
+      setMatchCounts(counts)
+    } else {
+      setMatchCounts({})
     }
-    setMatchCounts(counts)
     setLoading(false)
   }
 
@@ -38,11 +43,11 @@ export default function Sessions() {
       : 1
     const { data, error } = await supabase
       .from('sessions')
-      .insert({ session_number: nextNumber, date: date || null, type: sessionType })
+      .insert({ session_number: nextNumber, date: date || null, type: sessionType, league_id: leagueId })
       .select()
       .single()
     if (!error && data) {
-      navigate(`/sessions/${data.id}`)
+      navigate(`${data.id}`)
     }
     setCreating(false)
   }
@@ -120,7 +125,7 @@ export default function Sessions() {
             return (
               <li key={session.id}>
                 <button
-                  onClick={() => navigate(`/sessions/${session.id}`)}
+                  onClick={() => navigate(`${session.id}`)}
                   className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 flex items-center justify-between hover:border-green-300 hover:shadow-sm transition-all text-left"
                 >
                   <div>

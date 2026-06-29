@@ -1,27 +1,37 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { computeLeagueTable, sessionSummary } from '../utils/stats'
 
 export default function LeagueTable() {
+  const { leagueId } = useParams()
   const [table, setTable] = useState([])
   const [summary, setSummary] = useState([])
   const [playerById, setPlayerById] = useState({})
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, [leagueId])
 
   async function load() {
     setLoading(true)
-    const [{ data: players }, { data: sessions }, { data: slots }, { data: matches }] = await Promise.all([
-      supabase.from('players').select('*').order('name'),
-      supabase.from('sessions').select('*').order('session_number'),
-      supabase.from('session_slots').select('*'),
-      supabase.from('matches').select('*'),
+    const [{ data: players }, { data: sessions }] = await Promise.all([
+      supabase.from('players').select('*').eq('league_id', leagueId).order('name'),
+      supabase.from('sessions').select('*').eq('league_id', leagueId).order('session_number'),
     ])
     const p = players || []
     const s = sessions || []
+    const sessionIds = s.map(x => x.id)
+
+    const [{ data: slots }, { data: matches }] = await Promise.all([
+      sessionIds.length
+        ? supabase.from('session_slots').select('*').in('session_id', sessionIds)
+        : Promise.resolve({ data: [] }),
+      sessionIds.length
+        ? supabase.from('matches').select('*').in('session_id', sessionIds)
+        : Promise.resolve({ data: [] }),
+    ])
+
     const sl = slots || []
     const m = matches || []
 
@@ -50,7 +60,6 @@ export default function LeagueTable() {
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6">
           <div className="overflow-x-auto">
             <div className="min-w-[480px]">
-              {/* Table header */}
               <div className="grid grid-cols-[2rem_1fr_4.5rem_3rem_3rem_3rem_3.5rem] gap-x-2 px-4 py-2 bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase tracking-wide">
                 <div>#</div>
                 <div>Player</div>
@@ -60,12 +69,10 @@ export default function LeagueTable() {
                 <div className="text-center">Pts</div>
                 <div className="text-center">Win%</div>
               </div>
-
-              {/* Rows */}
               {table.map((row, i) => (
                 <button
                   key={row.id}
-                  onClick={() => navigate(`/players/${row.id}`)}
+                  onClick={() => navigate(`players/${row.id}`)}
                   className="w-full grid grid-cols-[2rem_1fr_4.5rem_3rem_3rem_3rem_3.5rem] gap-x-2 px-4 py-3.5 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors text-left items-center"
                 >
                   <div className="text-sm font-bold text-slate-400">{i + 1}</div>
@@ -92,7 +99,6 @@ export default function LeagueTable() {
         </div>
       )}
 
-      {/* Session Summary */}
       {summary.some(s => s.matches > 0) && (
         <div>
           <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Session History</h2>
@@ -104,7 +110,7 @@ export default function LeagueTable() {
             {summary.filter(s => s.players > 0).map(({ session, players: numP, matches: numM, topPlayerId, topPoints }) => (
               <button
                 key={session.id}
-                onClick={() => navigate(`/sessions/${session.id}`)}
+                onClick={() => navigate(`sessions/${session.id}`)}
                 className="w-full flex items-center justify-between px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors text-left"
               >
                 <div>
