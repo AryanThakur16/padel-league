@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-const PASSWORD = 'AryanThakuristhegoat'
+const PASSWORD = 'P123'
 
 export default function PasswordModal({ message, onConfirm, onCancel }) {
   const [value, setValue] = useState('')
