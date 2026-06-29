@@ -8,6 +8,7 @@ export default function Sessions() {
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
   const [date, setDate] = useState('')
+  const [sessionType, setSessionType] = useState('americano')
   const navigate = useNavigate()
 
   useEffect(() => { load() }, [])
@@ -37,7 +38,7 @@ export default function Sessions() {
       : 1
     const { data, error } = await supabase
       .from('sessions')
-      .insert({ session_number: nextNumber, date: date || null })
+      .insert({ session_number: nextNumber, date: date || null, type: sessionType })
       .select()
       .single()
     if (!error && data) {
@@ -51,6 +52,33 @@ export default function Sessions() {
       <h1 className="text-2xl font-bold text-slate-800 mb-6">Sessions</h1>
 
       <form onSubmit={createSession} className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
+        {/* Session type picker */}
+        <label className="block text-xs font-medium text-slate-500 mb-2">Session Type</label>
+        <div className="flex rounded-lg overflow-hidden border border-slate-200 mb-4">
+          <button
+            type="button"
+            onClick={() => setSessionType('americano')}
+            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+              sessionType === 'americano'
+                ? 'bg-green-600 text-white'
+                : 'text-slate-500 hover:bg-slate-50'
+            }`}
+          >
+            🎾 Americano
+          </button>
+          <button
+            type="button"
+            onClick={() => setSessionType('king_of_court')}
+            className={`flex-1 py-2.5 text-sm font-medium transition-colors border-l border-slate-200 ${
+              sessionType === 'king_of_court'
+                ? 'bg-amber-500 text-white'
+                : 'text-slate-500 hover:bg-slate-50'
+            }`}
+          >
+            👑 King of Court
+          </button>
+        </div>
+
         <label className="block text-xs font-medium text-slate-500 mb-1">Date (optional)</label>
         <input
           type="date"
@@ -61,7 +89,11 @@ export default function Sessions() {
         <button
           type="submit"
           disabled={creating}
-          className="w-full bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+          className={`w-full text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+            sessionType === 'king_of_court'
+              ? 'bg-amber-500 hover:bg-amber-600'
+              : 'bg-green-600 hover:bg-green-700'
+          }`}
         >
           {creating ? '…' : '+ New Session'}
         </button>
@@ -83,6 +115,7 @@ export default function Sessions() {
             const complete = total > 0 && done === total
             const inProgress = total > 0 && done < total
             const notStarted = total === 0
+            const isKoC = session.type === 'king_of_court'
 
             return (
               <li key={session.id}>
@@ -92,11 +125,10 @@ export default function Sessions() {
                 >
                   <div>
                     <div className="font-semibold text-slate-800">Session {session.session_number}</div>
-                    {session.date && (
-                      <div className="text-xs text-slate-400 mt-0.5">
-                        {new Date(session.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </div>
-                    )}
+                    <div className="text-xs text-slate-400 mt-0.5">
+                      {isKoC ? '👑 King of Court' : '🎾 Americano'}
+                      {session.date && ` · ${new Date(session.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {complete && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">Complete</span>}
