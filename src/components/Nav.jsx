@@ -17,6 +17,7 @@ export default function Nav({ leagueId }) {
     { to: base, label: 'Standings', icon: '🏆', end: true },
     { to: `${base}/sessions`, label: 'Sessions', icon: '🎾', end: false },
     { to: `${base}/players`, label: 'Players', icon: '👥', end: false },
+    { to: `${base}/settings`, label: 'Settings', icon: '⚙️', end: false },
   ]
 
   return (

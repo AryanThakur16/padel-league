@@ -6,6 +6,7 @@ import Players from './pages/Players'
 import Sessions from './pages/Sessions'
 import SessionDetail from './pages/SessionDetail'
 import PlayerStats from './pages/PlayerStats'
+import LeagueSettings from './pages/LeagueSettings'
 
 const CONFIGURED =
   import.meta.env.VITE_SUPABASE_URL &&
@@ -115,6 +116,7 @@ function LeagueShell() {
           <Route path="players/:id" element={<PlayerStats />} />
           <Route path="sessions" element={<Sessions />} />
           <Route path="sessions/:id" element={<SessionDetail />} />
+          <Route path="settings" element={<LeagueSettings />} />
           <Route path="*" element={<Navigate to="" replace />} />
         </Routes>
       </div>
